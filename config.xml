@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>-- Properties File Comments --</comment>
+<!-- WebDriverSystemPaths -->
+<entry key="WebDriverSystemPaths.Chrome">C:\Users\i-am-\Documents\06. PROGRAMS\Programming\Selenium\chromedriver_74.exe</entry>
+<entry key="WebDriverSystemPaths.Firefox"></entry>
+<entry key="WebDriverSystemPaths.IE"></entry>
+<entry key="WebDriverSystemPaths.Edge"></entry>
+<entry key="WebDriverSystemPaths.Opera"></entry>
+<entry key="WebDriverSystemPaths.Safari"></entry>
+<entry key="WebDriverSystemPaths.iOS_iPhone"></entry>
+<entry key="WebDriverSystemPaths.iOS_iPad"></entry>
+<entry key="WebDriverSystemPaths.Android"></entry>
+<entry key="WebDriverSystemPaths.HtmlUnit"></entry>
+<!-- Test -->
+<entry key="Test.EnvironIP">translate.google.com.au</entry>
+<entry key="Test.EnvironPort">-1</entry>
+<entry key="Test.WaitSeconds">5</entry>
+<!-- TestSleeps : Used only when "demonstrating" a test -->
+<entry key="TestSleeps.MilliSecondsBetweenKeyStrokes">100</entry>
+<entry key="TestSleeps.MilliSecondsBeforeClick">100</entry>
+<entry key="TestSleeps.MilliSecondsAfterClick">100</entry>
+<entry key="TestSleeps.MilliSecondSimulateInteractivePause">2000</entry>
+<entry key="TestSleeps.MilliSecondDurationOfSuccessMessage">3500</entry>
+<!-- SeleniumNodes -->
+<entry key="SeleniumNodeCount">1</entry>
+<entry key="SeleniumNodeLocal_1">True</entry>
+<entry key="SeleniumNodeDriverType_1">Chrome</entry>
+</properties>
