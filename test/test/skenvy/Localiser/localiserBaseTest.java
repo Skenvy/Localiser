@@ -44,6 +44,12 @@ public class localiserBaseTest extends localiserBase {
 		return null;
 	}
 
+	@Override
+	public void declarations() {
+		declareThisTestAsCurrentlyBeingUnderDevelopment();
+		//declaseThisTestAsHavingVerboseOutput();
+	}
+
 	
 	
 	

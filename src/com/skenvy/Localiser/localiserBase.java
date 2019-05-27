@@ -21,9 +21,11 @@ public abstract class localiserBase extends baseTest {
 	
 	public abstract String getPathToXMLReferenceFileBeingTranslatedFrom();
 	
+	public abstract void declarations();
+	
 	@Test
 	public void CanDoASimpleTranslation() throws InterruptedException {
-		declareThisTestAsCurrentlyBeingUnderDevelopment();
+		declarations();
 		for(Language translateTo : getLanguagesToTranslateTo()) {
 			nwd.openTestDefaultWithHTTPSAndSubroot(getGoogleTranslateSubquery(translateTo));
 			sendKeysToXPathElementIfExists("//*[@id=\"source\"]", "How are you today?");
