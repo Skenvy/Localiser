@@ -1,8 +1,11 @@
 package test.skenvy.Localiser;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.skenvy.Localiser.Language;
 import com.skenvy.Localiser.localiserBase;
@@ -13,7 +16,7 @@ public class localiserBaseTest extends localiserBase {
 		super();
 	}
 	
-	@Override
+	@Override //Super of baseTest
 	public String getPathToDomainConstantsConfig() {
 		return System.getProperty("user.dir")+"\\config_test.xml";
 	}
@@ -23,34 +26,40 @@ public class localiserBaseTest extends localiserBase {
 		return Language.English;
 	}
 
+	@SuppressWarnings("serial")
 	@Override
-	public List<Language> getLanguagesToTranslateTo() {
-		return new ArrayList<Language>() {{
-			add(Language.Chinese_Simplified);
-			add(Language.Spanish);
-			add(Language.German);
+	public Map<Language,String> getLanguagesToTranslateToMappedToOutputPaths() {
+		// TODO : Correct the path, right now any path just to validate file open and close
+		return new HashMap<Language,String>() {{
+			put(Language.Chinese_Simplified,"C:\\workspaces\\MYGITHUB\\Localiser\\config_test.xml");
+			put(Language.Spanish,"C:\\workspaces\\MYGITHUB\\Localiser\\config_test.xml");
+			put(Language.German,"C:\\workspaces\\MYGITHUB\\Localiser\\config_test.xml");
 		}};
 	}
 
 	@Override
-	public String getPathToJSONReferenceFileBeingTranslatedFrom() {
+	public String getPathToReferenceFileBeingTranslatedFrom() {
+		// TODO : Correct the path, right now any path just to validate file open and close
+		return "C:\\workspaces\\MYGITHUB\\Localiser\\config_test.xml";
+	}
+
+	@SuppressWarnings("serial")
+	@Override
+	public LinkedHashMap<String, String> getTextToTranslateFromFromReferenceFile(FileInputStream fis) {
 		// TODO Auto-generated method stub
-		return null;
+		return new LinkedHashMap<String,String>(){{put("A","How are you today?");}};
 	}
 
 	@Override
-	public String getPathToXMLReferenceFileBeingTranslatedFrom() {
+	public void writeOutTextTranslatedFromReferenceFile(FileOutputStream fos, LinkedHashMap<String, String> translations) {
 		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
 	public void declarations() {
-		declareThisTestAsCurrentlyBeingUnderDevelopment();
+		//declareThisTestAsCurrentlyBeingUnderDevelopment();
 		//declaseThisTestAsHavingVerboseOutput();
 	}
-
-	
 	
 	
 
