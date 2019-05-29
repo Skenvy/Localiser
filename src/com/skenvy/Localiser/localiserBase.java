@@ -115,7 +115,8 @@ public abstract class localiserBase extends baseTest {
 	 * @param translateTo
 	 */
 	private final void loadNewGoogleTranslatePage(Language translateTo) {
-		nwd.openTestDefaultWithHTTPSAndSubroot(getGoogleTranslateSubquery(translateTo));
+		unwrapNiceWebDriver().openTestDefaultWithHTTPSAndSubroot(getGoogleTranslateSubquery(translateTo));
+		
 	}
 	
 	/***

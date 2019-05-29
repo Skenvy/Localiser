@@ -31,16 +31,16 @@ public class localiserBaseTest extends localiserBase {
 	public Map<Language,String> getLanguagesToTranslateToMappedToOutputPaths() {
 		// TODO : Correct the path, right now any path just to validate file open and close
 		return new HashMap<Language,String>() {{
-			put(Language.Chinese_Simplified,"C:\\workspaces\\MYGITHUB\\Localiser\\config_test.xml");
-			put(Language.Spanish,"C:\\workspaces\\MYGITHUB\\Localiser\\config_test.xml");
-			put(Language.German,"C:\\workspaces\\MYGITHUB\\Localiser\\config_test.xml");
+			put(Language.Chinese_Simplified,"C:\\workspaces\\MYGITHUB\\Localiser\\writable_test.xml");
+			put(Language.Spanish,"C:\\workspaces\\MYGITHUB\\Localiser\\writable_test.xml");
+			put(Language.German,"C:\\workspaces\\MYGITHUB\\Localiser\\writable_test.xml");
 		}};
 	}
 
 	@Override
 	public String getPathToReferenceFileBeingTranslatedFrom() {
 		// TODO : Correct the path, right now any path just to validate file open and close
-		return "C:\\workspaces\\MYGITHUB\\Localiser\\config_test.xml";
+		return "C:\\workspaces\\MYGITHUB\\Localiser\\writable_test.xml";
 	}
 
 	@SuppressWarnings("serial")
