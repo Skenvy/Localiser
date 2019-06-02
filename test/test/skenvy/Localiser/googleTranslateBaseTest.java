@@ -34,6 +34,8 @@ public class googleTranslateBaseTest extends googleTranslateBase {
 			put(Language.Chinese_Simplified,"C:\\workspaces\\MYGITHUB\\Localiser\\writable_test.xml");
 			put(Language.Spanish,"C:\\workspaces\\MYGITHUB\\Localiser\\writable_test.xml");
 			put(Language.German,"C:\\workspaces\\MYGITHUB\\Localiser\\writable_test.xml");
+			put(Language.Italian,"C:\\workspaces\\MYGITHUB\\Localiser\\writable_test.xml");
+			put(Language.Japanese,"C:\\workspaces\\MYGITHUB\\Localiser\\writable_test.xml");
 		}};
 	}
 

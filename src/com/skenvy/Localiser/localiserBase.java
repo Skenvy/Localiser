@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebElement;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -92,6 +94,13 @@ public abstract class localiserBase extends baseTest {
 	public abstract String XPathToGetTextFrom();
 	
 	/***
+	 * The XPaths of the text fields WebElements which take "getText"; iterates
+	 * from 0.
+	 * @return
+	 */
+	public abstract String[] XPathsToGetDisambiguousTextFrom(int iteration);
+	
+	/***
 	 * Returns the literal path to the file to be read from.
 	 * @return
 	 */
@@ -130,11 +139,17 @@ public abstract class localiserBase extends baseTest {
 		LinkedHashMap<String,String> translationTargets = openFileStreamAndParseInFile();
 		LinkedHashMap<String,String> translationResults = new LinkedHashMap<String,String>();
 		loadTheTranslatingWebPage(translateTo);
+		String previousTranslation = "";
+		String translation = "";
 		for(Map.Entry<String,String> entry : translationTargets.entrySet()) {
 			typeIntoEnterTextBox(entry.getValue());
-			String translation = retrieveTheTranslatedText();
+			translation = retrieveTheTranslatedText();
+			while(translation.equals(previousTranslation)) {
+				translation = retrieveTheTranslatedText();
+			}
 			translationResults.put(entry.getKey(), translation);
 			messageOutPerTranslation(entry.getValue(),translateTo,translation);
+			previousTranslation = translation;
 		}
 		openFileStreamAndWriteOutFile(translateTo,translationResults);
 	}
@@ -200,7 +215,34 @@ public abstract class localiserBase extends baseTest {
 	 */
 	private final String retrieveTheTranslatedText() throws InterruptedException {
 		//TODO The string must be interpreted as UTF8
-		return clickOnXPathElementIfExists(XPathToGetTextFrom()).getText();
+		try {
+			WebElement clicked = clickOnXPathElementIfExists(XPathToGetTextFrom());
+			if(clicked != null) {
+				return clicked.getText();
+			} else {
+				String[] disambiguousTranslationPaths = XPathsToGetDisambiguousTextFrom(0);
+				clicked = clickOnXPathElementIfExists(disambiguousTranslationPaths[0]);
+				if(clicked == null) {
+					return "TRANSLATION LOADED A DISAMBIGUOUS RESPONSE THAT COULD NOT BE CLICKED INTO";
+				} else {
+					String partial = "{";
+					int iter = 1;
+					while(clicked != null) {
+						partial += " (";
+						for(String disambiguousTranslationPath : disambiguousTranslationPaths) {
+							partial += (clickOnXPathElementIfExists(disambiguousTranslationPath).getText()+" | ");
+						}
+						partial = partial.substring(0, partial.length()-3)+") ";
+						disambiguousTranslationPaths = XPathsToGetDisambiguousTextFrom(iter);
+						clicked = clickOnXPathElementIfExists(disambiguousTranslationPaths[0]);
+						iter++;
+					}
+					return (partial+"}");
+				}
+			}
+		} catch(StaleElementReferenceException e) {
+			return this.retrieveTheTranslatedText();
+		}
 	}
 	
 	/*
@@ -214,7 +256,7 @@ public abstract class localiserBase extends baseTest {
 	 * @param translation
 	 */
 	private final void messageOutPerTranslation(String untranslated, Language translateTo, String translation) {
-		System.out.println("\""+untranslated+"\" :from "+getLanguageToTranslateFrom().toString()+" to "+translateTo.toString()+": \""+translation+"\"");
+		System.out.println("\""+untranslated+"\": from "+getLanguageToTranslateFrom().toString()+" to "+translateTo.toString()+": \""+translation+"\"");
 	}
 	
 	/***
