@@ -13,19 +13,18 @@ import com.skenvy.SeleniumNG.baseTest;
 
 public abstract class localiserBase extends baseTest {
 	
-	/***
-	 * XPath to the "Enter text..." box in Google Translate
-	 */
-	private final static String enterTextBoxXpath = "//*[@id=\"source\"]";
-	
-	/***
-	 * XPath to the "results of translating" box in Google Translate.
-	 */
-	private final static String getTextBoxXpath = "/html/body/div[2]/div[1]/div[2]/div[1]/div[1]/div[2]/div[3]/div[1]/div[2]/div/span[1]/span";
-	
 	public localiserBase() {
 		super();
 	}
+	
+	/*
+	 * Abstracts
+	 */
+	
+	/***
+	 * Abstracted preface to call baseTest methods of "declare*" type
+	 */
+	public abstract void declarations();
 	
 	/***
 	 * Return the single "Language" enum corresponding to the language of the
@@ -51,6 +50,48 @@ public abstract class localiserBase extends baseTest {
 	public abstract Map<Language,String> getLanguagesToTranslateToMappedToOutputPaths();
 	
 	/***
+	 * If this returns true, then the abstract 'getTheTranslationSubquery" MUST
+	 * return the path that can be appended to the test default parameters in
+	 * the configuration file, as a subroot query. Else, the abstract 
+	 * "interactWithQuerylesslyLoadedWebPageToPrepareForCorrectTranslation"
+	 * MUST dictate a way of interacting with the web page loaded without a 
+	 * query such that it is ready to have text entered into some "translate
+	 * from" box and retrieve the output from some "result" box.
+	 * @return
+	 */
+	public abstract boolean translationPageLoadableFromSubquery();
+	
+	/***
+	 * If "translationPageLoadableFromSubquery" returns TRUE, then this MUST
+	 * return the path that can be appended to the test default parameters in
+	 * the configuration file, as a subroot query.
+	 * @param translateTo
+	 * @return
+	 */
+	public abstract String getTheTranslationSubquery(Language translateTo);
+	
+	/***
+	 * If "translationPageLoadableFromSubquery" returns FALSE, then this MUST
+	 * dictate a way of interacting with the web page loaded without a query 
+	 * such that it is ready to have text entered into some "translate from" 
+	 * box and retrieve the output from some "result" box.
+	 * @param translateTo
+	 */
+	public abstract void interactWithQuerylesslyLoadedWebPageToPrepareForCorrectTranslation(Language translateTo);
+	
+	/***
+	 * The XPath of the text input WebElement which received from "sendKeys"
+	 * @return
+	 */
+	public abstract String XPathToTypeTextInto();
+	
+	/***
+	 * The XPath of the text field WebElement which takes "getText"
+	 * @return
+	 */
+	public abstract String XPathToGetTextFrom();
+	
+	/***
 	 * Returns the literal path to the file to be read from.
 	 * @return
 	 */
@@ -71,10 +112,9 @@ public abstract class localiserBase extends baseTest {
 	 */
 	public abstract void writeOutTextTranslatedFromReferenceFile(FileOutputStream fos, LinkedHashMap<String,String> translations);
 	
-	/***
-	 * Abstracted preface to call baseTest methods of "declare*" type
+	/*
+	 * The translation test
 	 */
-	public abstract void declarations();
 	
 	/***
 	 * Wrapped under the data provider that iterates languages to translate to,
@@ -85,10 +125,11 @@ public abstract class localiserBase extends baseTest {
 	 */
 	@Test(dataProvider = "LanguagesBeingTranslatedTo")
 	public final void translate(Language translateTo) throws InterruptedException, IOException {
+		//Make test declarations and read in from file, and prepare output
 		declarations();
 		LinkedHashMap<String,String> translationTargets = openFileStreamAndParseInFile();
 		LinkedHashMap<String,String> translationResults = new LinkedHashMap<String,String>();
-		loadNewGoogleTranslatePage(translateTo);
+		loadTheTranslatingWebPage(translateTo);
 		for(Map.Entry<String,String> entry : translationTargets.entrySet()) {
 			typeIntoEnterTextBox(entry.getValue());
 			String translation = retrieveTheTranslatedText();
@@ -98,55 +139,9 @@ public abstract class localiserBase extends baseTest {
 		openFileStreamAndWriteOutFile(translateTo,translationResults);
 	}
 	
-	/***
-	 * Craft the string appropriate for the subquery to select to "to" and
-	 * "from" languages.
-	 * @param translateTo
-	 * @return
+	/*
+	 * Private finals : File streaming
 	 */
-	private final String getGoogleTranslateSubquery(Language translateTo) {
-		return "?hl=en&tab=wT#view=home&op=translate&sl=" +
-				getLanguageToTranslateFrom().getCode() +
-				"&tl="+translateTo.getCode();
-	}
-	
-	/***
-	 * Opens Google translate page with the languages already selected
-	 * @param translateTo
-	 */
-	private final void loadNewGoogleTranslatePage(Language translateTo) {
-		unwrapNiceWebDriver().openTestDefaultWithHTTPSAndSubroot(getGoogleTranslateSubquery(translateTo));
-		
-	}
-	
-	/***
-	 * Types the string to be translated into the enter box
-	 * @param textToType
-	 * @throws InterruptedException
-	 */
-	private final void typeIntoEnterTextBox(String textToType) throws InterruptedException {
-		sendKeysToXPathElementIfExists(enterTextBoxXpath, textToType);
-	}
-	
-	/***
-	 * Gets the translation from the result box
-	 * @return
-	 * @throws InterruptedException
-	 */
-	private final String retrieveTheTranslatedText() throws InterruptedException {
-		//TODO The string must be interpreted as UTF8
-		return clickOnXPathElementIfExists(getTextBoxXpath).getText();
-	}
-	
-	/***
-	 * Prints a console message per translations
-	 * @param untranslated
-	 * @param translateTo
-	 * @param translation
-	 */
-	private void messageOutPerTranslation(String untranslated, Language translateTo, String translation) {
-		System.out.println("\""+untranslated+"\" :from "+getLanguageToTranslateFrom().toString()+" to "+translateTo.toString()+": \""+translation+"\"");
-	}
 	
 	/***
 	 * Loads the reference file
@@ -171,13 +166,64 @@ public abstract class localiserBase extends baseTest {
 		out.close();
 	}
 	
+	/*
+	 * Private finals : Page interaction
+	 */
+	
+	/***
+	 * Load the web page that will be used for translating text
+	 * @param translateTo
+	 */
+	private final void loadTheTranslatingWebPage(Language translateTo) {
+		if(this.translationPageLoadableFromSubquery()) {
+			unwrapNiceWebDriver().openTestDefaultWithHTTPSAndSubroot(getTheTranslationSubquery(translateTo));
+		} else {
+			//unwrapNiceWebDriver().openTestDefaultWithHTTPSAtBase();
+			//"openTestDefaultWithHTTPSAtBase" currently already called by "baseTest": may change
+			interactWithQuerylesslyLoadedWebPageToPrepareForCorrectTranslation(translateTo);
+		}
+	}
+	
+	/***
+	 * Types the string to be translated into the enter box
+	 * @param textToType
+	 * @throws InterruptedException
+	 */
+	private final void typeIntoEnterTextBox(String textToType) throws InterruptedException {
+		sendKeysAfterClickingToXPathElementIfExists(XPathToTypeTextInto(), textToType);
+	}
+	
+	/***
+	 * Gets the translation from the result box
+	 * @return
+	 * @throws InterruptedException
+	 */
+	private final String retrieveTheTranslatedText() throws InterruptedException {
+		//TODO The string must be interpreted as UTF8
+		return clickOnXPathElementIfExists(XPathToGetTextFrom()).getText();
+	}
+	
+	/*
+	 * Private finals : Niceties
+	 */
+	
+	/***
+	 * Prints a console message per translations
+	 * @param untranslated
+	 * @param translateTo
+	 * @param translation
+	 */
+	private final void messageOutPerTranslation(String untranslated, Language translateTo, String translation) {
+		System.out.println("\""+untranslated+"\" :from "+getLanguageToTranslateFrom().toString()+" to "+translateTo.toString()+": \""+translation+"\"");
+	}
+	
 	/***
 	 * Wraps the return of "languages to translate into" into an 
 	 * {@code Object[list.size()][1]}
 	 * @return
 	 */
 	@DataProvider(name = "LanguagesBeingTranslatedTo")
-	public final Object[][] getLanguagesBeingTranslatedTo(){
+	protected final Object[][] getLanguagesBeingTranslatedTo(){
 		return wrapCollectionToDataProvider(getLanguagesToTranslateToMappedToOutputPaths().keySet());
 	}
 	

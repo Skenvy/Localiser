@@ -8,11 +8,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.skenvy.Localiser.Language;
-import com.skenvy.Localiser.localiserBase;
+import com.skenvy.Localiser.googleTranslateBase;
 
-public class localiserBaseTest extends localiserBase {
+public class googleTranslateBaseTest extends googleTranslateBase {
 
-	public localiserBaseTest() throws IOException {
+	public googleTranslateBaseTest() throws IOException {
 		super();
 	}
 	
