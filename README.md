@@ -1,1 +1,2 @@
 # Localiser
+Currently a hacky WIP with no optimisations to parsing files, to experiment with the **SeleniumNG** repository (which this utilises) to use (currently targeted at Google translate but with the scope to make generic per webpage) web pages that offer "translating text", to open and parse files (Json, XML, ...) to translate "local language" files for the purpose of enabling "localisation" of stringy data files that provide web site localisation dynamically.
