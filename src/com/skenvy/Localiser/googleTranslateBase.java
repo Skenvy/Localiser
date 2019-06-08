@@ -1,6 +1,5 @@
 package com.skenvy.Localiser;
 
-
 public abstract class googleTranslateBase extends localiserBase {
 
 	/***
@@ -20,7 +19,7 @@ public abstract class googleTranslateBase extends localiserBase {
 	private final static String getTextBoxXPathPartialIterationSuffix = "]";
 	
 	public googleTranslateBase() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 	
 	/*
